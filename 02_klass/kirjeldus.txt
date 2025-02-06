@@ -1,1 +1,10 @@
 Võimalikult spetsiifilisel teemal rakendus, milles on vähemalt üks klass ning sellest vähemalt kaks eraldi juhitavat eksemplari.
+
+Hambaharjad
+1 kodus                                               Masinkoodi käsklus
+1 poest tulnud - koos pakendiga                       koos sisendandmetega
+20 - ühte suuremasse poodi kastis                     Programmeerimiskeele valmiskäsklus
+1000 - poeketi tellimus - suurem pappkast             Omaloodud funktsioon
+3000 - euroalus?                                      Klass / teek / moodul
+12000 - merekonteiner                                 Komponent, ühendatud hajusarhitektuur
+
