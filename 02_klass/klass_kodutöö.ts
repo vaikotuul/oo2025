@@ -1,50 +1,34 @@
-class EstonianID {
-    private idCode: string;
+class Student {
+    name: string;
+    age: number;
+    grade: number;
 
-    constructor(idCode: string) {
-        if (!this.isValidIDCode(idCode)) {
-            throw new Error("Invalid Estonian ID code");
-        }
-        this.idCode = idCode;
+    constructor(name: string, age: number, grade: number) {
+        if (age < 0) throw new Error("Vanus ei saa olla negatiivne");
+        if (grade < 1 || grade > 12) throw new Error("Klass peab olema 1-12");
+
+        this.name = name;
+        this.age = age;
+        this.grade = grade;
     }
 
-    private isValidIDCode(idCode: string): boolean {
-        return /^\d{11}$/.test(idCode);
+    getInfo(): string {
+        return "Nimi: " + this.name + ", Vanus: " + this.age + ", Klass: " + this.grade;
     }
 
-    getGender(): string {
-        const genderDigit = parseInt(this.idCode.charAt(0), 10);
-        return genderDigit % 2 === 0 ? "Female" : "Male";
-    }
-
-    getBirthDate(): Date {
-        const centuryCode = parseInt(this.idCode.charAt(0), 10);
-        const year = (centuryCode <= 2 ? 1800 : centuryCode <= 4 ? 1900 : 2000) + parseInt(this.idCode.substring(1, 3), 10);
-        const month = parseInt(this.idCode.substring(3, 5), 10) - 1;
-        const day = parseInt(this.idCode.substring(5, 7), 10);
-        return new Date(year, month, day);
-    }
-
-    getAge(): number {
-        const birthDate = this.getBirthDate();
-        const ageDifMs = Date.now() - birthDate.getTime();
-        const ageDate = new Date(ageDifMs);
-        return Math.abs(ageDate.getUTCFullYear() - 1970);
+    isAdult(): boolean {
+        return this.age >= 18;
     }
 }
 
-// Example usage with various input data:
-const ids = [
-    new EstonianID("39501234215"),
-    new EstonianID("60101019906"),
-    new EstonianID("49807234215"),
-    new EstonianID("50303039914")
-];
+const student1 = new Student("Mari", 17, 11);
+const student2 = new Student("Jüri", 19, 12);
+const student3 = new Student("Kati", 15, 9);
 
-ids.forEach(id => {
-    console.log(`ID Code: ${id['idCode']}`);
-    console.log(`Gender: ${id.getGender()}`);
-    console.log(`Birth Date: ${id.getBirthDate().toISOString().split('T')[0]}`);
-    console.log(`Age: ${id.getAge()}`);
-    console.log('---');
-});
+console.log(student2.getInfo());
+console.log(student1.isAdult());
+
+const allStudents = [student1, student2, student3];
+
+const twelfthGraders = allStudents.filter(student => student.grade === 12);
+console.log(twelfthGraders.length);
