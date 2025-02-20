@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Takisti</title>
+    <script src="jada1.js"></script>
+    <script>
+        let r1, r2, sc1;
+        function startPage(){
+           r1=new Resistor(10); 
+           r2=new Resistor(220);
+           r3=new Resistor(50);
+           sc1=new SeriesCircuit(canvas1.getContext("2d"), 10, 50);
+           sc1.push(r1);
+           sc1.push(r2);
+           sc1.push(r3);
+
+           r4=new Resistor(20); 
+           r5=new Resistor(230);
+           r6=new Resistor(60);
+           sc1=new SeriesCircuit(canvas1.getContext("2d"), 10, 150, 50);
+           sc1.push(r4);
+           sc1.push(r5);
+           sc1.push(r6);
+        }
+    </script>
+  </head>
+  <body onload="startPage()">
+      <canvas id="canvas1" width="400" height="300"></canvas>
+  </body>
+</html>

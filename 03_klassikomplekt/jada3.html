@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Takisti</title>
+    <script src="jada3.js"></script>
+    <script>
+        let r1, r2, r3, sc1;
+        function startPage(){
+           r1 = new Resistor(110); 
+           r2 = new Resistor(220);
+           r3 = new Resistor(330);
+           sc1 = new SeriesCircuit(canvas1.getContext("2d"), 10, 50);
+           sc1.push(r1);
+           sc1.push(r2);
+           sc1.push(r3);
+           range1.value = r1.getR();
+           range2.value = r2.getR();
+           range3.value = r3.getR();
+        }
+    </script>
+  </head>
+  <body onload="startPage()">
+      <canvas id="canvas1" width="400" height="150"></canvas> <br />
+      <input type="range" id="range1" min="100" max="1000" onchange="r1.setR(this.valueAsNumber)" />
+      <input type="range" id="range2" min="100" max="1000" onchange="r2.setR(this.valueAsNumber)" />
+      <input type="range" id="range3" min="100" max="1000" onchange="r3.setR(this.valueAsNumber)" />
+  </body>
+</html>

@@ -8,8 +8,8 @@ class Resistor{
     }
     draw(){
         this.g.beginPath();
-        this.g.rect(20, 10, 100, 30);
+        this.g.rect(50, 10, 150, 130);
         this.g.stroke();
-        this.g.fillText(""+this.r, 30, 20);
+        this.g.fillText(""+this.r, 110, 80);
     }
 }
