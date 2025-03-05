@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kujund</title>
+    <script src="proovikt.js"></script>
+    <script>
+        let kolmnurk1, kolmnurk2;
+        
+        function startPage() {
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext("2d");
+            
+            kolmnurk1 = new Kolmnurk(context, 0, 0);
+            kolmnurk2 = new Kolmnurk(context, 0, 0);
+            
+            kolmnurk1.lisaPunkt(50, 50);
+            kolmnurk1.lisaPunkt(150, 50);
+            kolmnurk1.lisaPunkt(100, 150);
+            
+            kolmnurk2.lisaPunkt(200, 200);
+            kolmnurk2.lisaPunkt(300, 200);
+            kolmnurk2.lisaPunkt(250, 300);
+            
+            kolmnurk1.küljePikkused();
+            kolmnurk2.küljePikkused();
+            
+            document.getElementById('addPoint').addEventListener('click', function() {
+                const x = parseInt(document.getElementById('pointX').value);
+                const y = parseInt(document.getElementById('pointY').value);
+                kolmnurk1.lisaPunkt(x, y);
+            });
+            
+            document.getElementById('moveNupp').addEventListener('click', function() {
+                const dx = parseInt(document.getElementById('moveX').value);
+                const dy = parseInt(document.getElementById('moveY').value);
+                kolmnurk1.nihuta(dx, dy);
+            });
+            
+            document.getElementById('scaleNupp').addEventListener('click', function() {
+                const faktor = parseFloat(document.getElementById('scaleFactor').value);
+                kolmnurk1.suurenda(faktor);
+            });
+            
+            document.getElementById('getSides').addEventListener('click', function() {
+                kolmnurk1.küljePikkused();
+            });
+        }
+    </script>
+</head>
+<body onload="startPage()">
+    <h1>Kujund</h1>
+    <canvas id="canvas" width="400" height="400" style="border: 1px solid black;"></canvas>
+    
+    <div>
+        <h3>Lisa punkt</h3>
+        X: <input type="number" id="pointX" value="100">
+        Y: <input type="number" id="pointY" value="100">
+        <button id="addPoint">Lisa punkt</button>
+    </div>
+    
+    <div>
+        <h3>Liiguta kujundit</h3>
+        dX: <input type="number" id="moveX" value="10">
+        dY: <input type="number" id="moveY" value="10">
+        <button id="moveNupp">Liiguta</button>
+    </div>
+    
+    <div>
+        <h3>Muuda suurust</h3>
+        Faktor: <input type="number" id="scaleFactor" value="1.2" step="0.1">
+        <button id="scaleNupp">Muuda</button>
+    </div>
+    
+    <div>
+        <h3>Näita külgede pikkusi</h3>
+        <button id="getSides">Näita külgede pikkusi</button>
+    </div>
+</body>
+</html>
