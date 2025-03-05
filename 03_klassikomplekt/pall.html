@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Pall</title>
+    <script src="pall.js"></script>
+    <script>
+        let pall;
+        let animatsioonID;
+        
+        function startPage() {
+            const canvas = document.getElementById('canvas1');
+            const context = canvas.getContext('2d');
+            
+            pall = new Pall(context, canvas.width / 2, 50);
+            
+            canvas.addEventListener('click', function(event) {
+                const rect = canvas.getBoundingClientRect();
+                const clickX = event.clientX - rect.left;
+                const clickY = event.clientY - rect.top;
+                
+                const dx = clickX - pall.getX();
+                const dy = clickY - pall.getY();
+                const kaugus = Math.sqrt(dx * dx + dy * dy);
+                
+                if (kaugus < pall.getRaadius()) {
+                    pall.hüppa();
+                }
+            });
+            
+            animate();
+        }
+        
+        function animate() {
+            pall.liigu();
+            animatsioonID = requestAnimationFrame(animate);
+        }
+    </script>
+    <meta charset="utf-8">
+  </head>
+  <body onload="startPage()">
+      <h1>Pall, mis kukub</h1>
+      <canvas id="canvas1" width="400" height="400" style="border:1px solid black;"></canvas><br/>
+      <p>Klõpsa pallile, et see hüppaks uuesti üles.</p>
+  </body>
+</html>
