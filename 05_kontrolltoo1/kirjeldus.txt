@@ -1,3 +1,15 @@
 Õppejõu käest valitud kolme tasemega kontrolltööülesanne.
 
 Punktid võib esitada eraldi programmidena
+
+
+* Kaalutud keskmine
+
+* Koosta funktsioon, kus antakse ette kahe ainekursuse ainepunktid ja hinded. Arvuta nende põhjal kaalutud keskmine. 
+(kontrolltoo1.ts)
+
+* Klassile saab lisada sooritatud ainete hindeid ja ainepunkte, välja küsida nende andmete põhjal parasjagu arvutatud kaalutud keskmine.
+(kontrolltoo2.ts)
+
+* Loo kasutajaliides: kasutaja valib hinde (A-F) ja sisestab ainepunktide arvu. Joonisel on näha ainete kaalutud keskmine, samuti ained ristkülikuna, mille laiuseks on ainepunktide arv ning kõrguseks hinde numbriline väärtus (A-5 .. F-1). 
+(kontrolltoo3.ts ja kontrolltoo3.html)
