@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="arvutused.js" defer></script>
+    <script>
+        let calculators=[];
+        function startPage() {
+            calculators[0]=new inchesToCM();
+            calculators[1]=new cmToInches();
+            activateCalculator();  
+        }
+
+        function activateCalculator(){
+            const calculatorSelect = document.getElementById("calculatorSelect");
+            const selectedIndex = calculatorSelect.selectedIndex;
+            document.getElementById("type1").innerText = calculators[selectedIndex].inputUnit();
+            document.getElementById("type2").innerText = calculators[selectedIndex].outputUnit();
+            document.getElementById("anwser").innerText = "";
+            document.getElementById("input1").value = "";
+        }
+
+        function buttonClick(){
+            const calculatorSelect = document.getElementById("calculatorSelect");
+            const selectedIndex = calculatorSelect.selectedIndex;
+            const input1 = document.getElementById("input1");
+            const anwser = document.getElementById("anwser");
+            anwser.innerText = calculators[selectedIndex].calculate(input1.valueAsNumber).toFixed(2);
+        }
+    </script>
+    <title>Ühikute arvutamine (CM ja tollid)</title>
+    <style>
+        input {
+            width: 50px;
+            border-radius: 10px;
+        }
+        span {
+            font-weight: bold;
+        }
+        body{
+            background-color: rgb(0, 0, 0);
+        }
+        h1, span{
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            color: white;
+        }
+    </style>
+</head>
+<body onload="startPage()">
+    <h1>Ühikute arvutamine (sentimeetrid ja tollid)</h1>
+    <input type="number" id="input1" onchange="buttonClick()">
+    <span id="type1"></span>
+    <input type="button" value="is" onclick="buttonClick()">&nbsp;
+    <span id="anwser"></span>
+    <span id="type2"></span>
+    <select id="calculatorSelect" onchange="activateCalculator()">
+        <option>inches to CM</option>
+        <option>CM to inches</option>
+    </select>
+</body>
+</html>
