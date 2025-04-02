@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+   <title>Kalkulaator</title>
+   <script>
+        let calcobj = null;
+        let exports = {}
+        function startPage() {
+            calcobj = new Calculator();
+        }
+        function buttonPress() {
+            calcobj.pressButton(event.target.value);
+            panel1.innerText = calcobj.getPanelContents();
+        }
+   </script>
+   <script src="calculator.js"></script>
+   <style>
+     input[type=button] { width: 37px }
+     #panel1 { width: 159px; height: 20px; margin-bottom: 10px; border: 1px solid black }
+    </style>
+</head>
+  <body onload="startPage()">
+     <div id="panel1"></div>
+     <input type="button" value="1" onclick="buttonPress()" />
+     <input type="button" value="2" onclick="buttonPress()" />
+     <input type="button" value="3" onclick="buttonPress()" />
+     <input type="button" value="+" onclick="buttonPress()" /><br />
+     <input type="button" value="4" onclick="buttonPress()" />
+     <input type="button" value="5" onclick="buttonPress()" />
+     <input type="button" value="6" onclick="buttonPress()" />
+     <input type="button" value="-" onclick="buttonPress()" /><br />
+     <input type="button" value="7" onclick="buttonPress()" />
+     <input type="button" value="8" onclick="buttonPress()" />
+     <input type="button" value="9" onclick="buttonPress()" />
+     <input type="button" value="X" onclick="buttonPress()" /><br />
+     <input type="button" value="0" onclick="buttonPress()" />
+     <input type="button" value="C" onclick="buttonPress()" />
+     <input type="button" value="=" onclick="buttonPress()" />
+     <input type="button" value="/" onclick="buttonPress()" /><br />
+     <input type="button" value="←" onclick="buttonPress()" />
+     <input type="button" value="pi" onclick="buttonPress()" />
+     <input type="button" value="e" onclick="buttonPress()" />
+  </body>
+</html>
