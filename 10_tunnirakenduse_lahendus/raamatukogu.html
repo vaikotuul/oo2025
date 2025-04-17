@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raamatukogu Haldussüsteem</title>
+    <script src="raamatukogu.js" defer></script>
+    <link rel="stylesheet" href="raamatukogu.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Raamatukogu Haldussüsteem</h1>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="books">Raamatud</button>
+            <button class="tab-button" data-tab="members">Laenutajad</button>
+            <button class="tab-button" data-tab="transactions">Tehingud</button>
+        </div>
+
+        <div id="books" class="tab-content active">
+            <h2>Raamatute Otsing</h2>
+            <input type="text" id="searchInput" placeholder="Otsi raamatuid...">
+            <button id="searchButton">Otsi</button>
+            <div id="bookResults"></div>
+        </div>
+
+        <div id="members" class="tab-content">
+            <h2>Laenutajad</h2>
+            <div id="memberList"></div>
+        </div>
+
+        <div id="transactions" class="tab-content">
+            <h2>Viimased Tehingud</h2>
+            <div id="transactionList"></div>
+        </div>
+    </div>
+</body>
+</html>

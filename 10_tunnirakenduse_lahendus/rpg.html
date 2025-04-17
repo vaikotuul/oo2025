@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="rpg.css">
+    <script src="rpg.js" defer></script>
+    <title>RPG</title>
+</head>
+<body>
+    <div id="game-container">
+        <div class="character-card">
+          <h2 id="player-name">Sõdalane</h2>
+          <div class="stats">
+            <div class="health-bar">
+              <span id="health-value">150 HP</span>
+            </div>
+            <div class="mana-bar" id="mana-container">
+              <span id="mana-value">100 Stamina</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="attack-btn">Rünnak</button>
+            <button class="defend-btn">Kaitse</button>
+            <button class="special-btn">Erimäng</button>
+          </div>
+        </div>
+        
+        <div id="battle-log"></div>
+      </div>
+</body>
+</html>
