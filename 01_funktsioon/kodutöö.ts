@@ -3,4 +3,4 @@ function ringiPindala(r: number): number {
     return Math.PI * Math.pow(r, 2);
   }
   
-  console.log(ringiPindala(5));
+  console.log(ringiPindala(1));

@@ -3,4 +3,4 @@ function ringiPindala(r) {
         throw new Error("Raadius ei saa olla negatiivne.");
     return Math.PI * Math.pow(r, 2);
 }
-console.log(ringiPindala(5));
+console.log(ringiPindala(1));
