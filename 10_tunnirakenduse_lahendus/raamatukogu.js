@@ -13,259 +13,176 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
+var _a;
+var Isik = /** @class */ (function () {
+    function Isik(nimi) {
+        this.nimi = nimi;
     }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
-// 1. Põhiklassid
-var LibraryEntity = /** @class */ (function () {
-    function LibraryEntity() {
-    }
-    return LibraryEntity;
+    return Isik;
 }());
-var Book = /** @class */ (function (_super) {
-    __extends(Book, _super);
-    function Book(isbn, title, author, publicationYear, availableCopies, totalCopies) {
-        var _this = _super.call(this) || this;
-        _this.isbn = isbn;
-        _this.title = title;
-        _this.author = author;
-        _this.publicationYear = publicationYear;
-        _this.availableCopies = availableCopies;
-        _this.totalCopies = totalCopies;
+var Kasutaja = /** @class */ (function (_super) {
+    __extends(Kasutaja, _super);
+    function Kasutaja() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.laenutatudRaamatud = [];
         return _this;
     }
-    Book.prototype.getInfo = function () {
-        return "".concat(this.title, " by ").concat(this.author, " (").concat(this.publicationYear, ") - ").concat(this.availableCopies, "/").concat(this.totalCopies, " available");
+    Kasutaja.prototype.tegevus = function () {
+        console.log("".concat(this.nimi, " saab raamatuid laenutada ja tagastada."));
     };
-    return Book;
-}(LibraryEntity));
-var LibraryMember = /** @class */ (function (_super) {
-    __extends(LibraryMember, _super);
-    function LibraryMember(memberId, name, email, joinDate, borrowedBooks) {
-        if (borrowedBooks === void 0) { borrowedBooks = []; }
-        var _this = _super.call(this) || this;
-        _this.memberId = memberId;
-        _this.name = name;
-        _this.email = email;
-        _this.joinDate = joinDate;
-        _this.borrowedBooks = borrowedBooks;
+    Kasutaja.prototype.laenutaRaamat = function (raamat) {
+        if (raamat.saadavus) {
+            raamat.laenuta();
+            this.laenutatudRaamatud.push(raamat);
+            console.log("".concat(this.nimi, " laenutas raamatu: ").concat(raamat.pealkiri));
+        }
+        else {
+            console.log("".concat(raamat.pealkiri, " ei ole saadaval."));
+        }
+    };
+    Kasutaja.prototype.tagastaRaamat = function (raamat) {
+        var index = this.laenutatudRaamatud.indexOf(raamat);
+        if (index > -1) {
+            raamat.tagasta();
+            this.laenutatudRaamatud.splice(index, 1);
+            console.log("".concat(this.nimi, " tagastas raamatu: ").concat(raamat.pealkiri));
+        }
+        else {
+            console.log("".concat(this.nimi, " ei ole seda raamatut laenutanud."));
+        }
+    };
+    return Kasutaja;
+}(Isik));
+var Teos = /** @class */ (function () {
+    function Teos(pealkiri, autor) {
+        this.pealkiri = pealkiri;
+        this.autor = autor;
+    }
+    return Teos;
+}());
+var Raamat = /** @class */ (function (_super) {
+    __extends(Raamat, _super);
+    function Raamat(pealkiri, autor, saadavus) {
+        if (saadavus === void 0) { saadavus = true; }
+        var _this = _super.call(this, pealkiri, autor) || this;
+        _this.saadavus = saadavus;
         return _this;
     }
-    LibraryMember.prototype.getInfo = function () {
-        return "".concat(this.name, " (ID: ").concat(this.memberId, ") - ").concat(this.borrowedBooks.length, " books borrowed");
+    Raamat.prototype.laenuta = function () {
+        this.saadavus = false;
     };
-    return LibraryMember;
-}(LibraryEntity));
-// 2. Laenutamise süsteem
-var BorrowedBook = /** @class */ (function () {
-    function BorrowedBook(book, borrowDate, dueDate, returned) {
-        if (returned === void 0) { returned = false; }
-        this.book = book;
-        this.borrowDate = borrowDate;
-        this.dueDate = dueDate;
-        this.returned = returned;
+    Raamat.prototype.tagasta = function () {
+        this.saadavus = true;
+    };
+    return Raamat;
+}(Teos));
+var Raamatukogu = /** @class */ (function () {
+    function Raamatukogu() {
+        this.raamatud = [];
+        this.kasutajad = [];
     }
-    BorrowedBook.prototype.getInfo = function () {
-        return "".concat(this.book.title, " - Due: ").concat(this.dueDate.toDateString(), " ").concat(this.returned ? '(Returned)' : '');
+    Raamatukogu.prototype.lisaRaamat = function (raamat) {
+        this.raamatud.push(raamat);
     };
-    return BorrowedBook;
-}());
-var LibraryTransaction = /** @class */ (function (_super) {
-    __extends(LibraryTransaction, _super);
-    function LibraryTransaction(transactionId, member, book, transactionDate, transactionType) {
-        var _this = _super.call(this) || this;
-        _this.transactionId = transactionId;
-        _this.member = member;
-        _this.book = book;
-        _this.transactionDate = transactionDate;
-        _this.transactionType = transactionType;
-        return _this;
-    }
-    LibraryTransaction.prototype.getInfo = function () {
-        return "[".concat(this.transactionId, "] ").concat(this.transactionType, " - ").concat(this.book.title, " by ").concat(this.member.name);
+    Raamatukogu.prototype.registreeriKasutaja = function (kasutaja) {
+        this.kasutajad.push(kasutaja);
     };
-    return LibraryTransaction;
-}(LibraryEntity));
-// 3. Raamatukogu klass
-var Library = /** @class */ (function () {
-    function Library() {
-        this.books = [];
-        this.members = [];
-        this.transactions = [];
-    }
-    Library.prototype.addBook = function (book) {
-        this.books.push(book);
+    Raamatukogu.prototype.saadavalRaamatud = function () {
+        return this.raamatud.filter(function (raamat) { return raamat.saadavus; });
     };
-    Library.prototype.registerMember = function (member) {
-        this.members.push(member);
-    };
-    Library.prototype.borrowBook = function (memberId, isbn) {
-        var member = this.members.find(function (m) { return m.memberId === memberId; });
-        var book = this.books.find(function (b) { return b.isbn === isbn; });
-        if (!member || !book) {
-            throw new Error("Member or book not found");
-        }
-        if (book.availableCopies <= 0) {
-            throw new Error("No available copies of this book");
-        }
-        var borrowDate = new Date();
-        var dueDate = new Date();
-        dueDate.setDate(borrowDate.getDate() + 30);
-        member.borrowedBooks.push(new BorrowedBook(book, borrowDate, dueDate));
-        book.availableCopies--;
-        this.transactions.push(new LibraryTransaction("TXN-".concat(Date.now()), member, book, borrowDate, 'BORROW'));
-    };
-    Library.prototype.returnBook = function (memberId, isbn) {
-        var member = this.members.find(function (m) { return m.memberId === memberId; });
-        var book = this.books.find(function (b) { return b.isbn === isbn; });
-        if (!member || !book) {
-            throw new Error("Member or book not found");
-        }
-        var borrowedBook = member.borrowedBooks.find(function (bb) {
-            return bb.book.isbn === isbn && !bb.returned;
-        });
-        if (!borrowedBook) {
-            throw new Error("Book not borrowed by this member");
-        }
-        borrowedBook.returned = true;
-        book.availableCopies++;
-        this.transactions.push(new LibraryTransaction("TXN-".concat(Date.now()), member, book, new Date(), 'RETURN'));
-    };
-    Library.prototype.searchBooks = function (query) {
-        var lowerQuery = query.toLowerCase();
-        return this.books.filter(function (book) {
-            return book.title.toLowerCase().includes(lowerQuery) ||
-                book.author.toLowerCase().includes(lowerQuery) ||
-                book.isbn.includes(query);
-        });
-    };
-    Library.prototype.getMemberInfo = function (memberId) {
-        return this.members.find(function (m) { return m.memberId === memberId; });
-    };
-    Library.prototype.getTransactionHistory = function () {
-        return __spreadArray([], this.transactions, true).reverse();
-    };
-    Library.prototype.getMembers = function () {
-        return this.members;
-    };
-    return Library;
-}());
-// 4. UI ja rakenduse käivitamine
-var LibraryApp = /** @class */ (function () {
-    function LibraryApp() {
-        this.library = new Library();
-        this.initializeSampleData();
-        this.setupEventListeners();
-    }
-    LibraryApp.prototype.initializeSampleData = function () {
-        // Lisame mõned näidandraamatud
-        this.library.addBook(new Book("978-3-16-148410-0", "Clean Code", "Robert C. Martin", 2008, 3, 5));
-        this.library.addBook(new Book("978-0-13-235088-4", "Design Patterns", "Erich Gamma", 1994, 2, 3));
-        this.library.addBook(new Book("978-0-321-58472-6", "The Pragmatic Programmer", "Andrew Hunt", 1999, 1, 2));
-        // Lisame mõned näidiskasutajad
-        this.library.registerMember(new LibraryMember("M001", "Mari Maasikas", "mari@example.com", new Date()));
-        this.library.registerMember(new LibraryMember("M002", "Jaan Jõesaar", "jaan@example.com", new Date()));
-    };
-    LibraryApp.prototype.setupEventListeners = function () {
+    Raamatukogu.prototype.renderRaamatud = function () {
         var _this = this;
-        // Tabide vahetamine
-        var tabButtons = document.querySelectorAll('.tab-button');
-        tabButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                document.querySelectorAll('.tab-button').forEach(function (btn) { return btn.classList.remove('active'); });
-                document.querySelectorAll('.tab-content').forEach(function (content) { return content.classList.remove('active'); });
-                button.classList.add('active');
-                var tabId = button.getAttribute('data-tab');
-                if (tabId) {
-                    var tabContent = document.getElementById(tabId);
-                    if (tabContent) {
-                        tabContent.classList.add('active');
-                    }
-                }
-            });
+        var output = document.getElementById("output");
+        if (!output)
+            return;
+        output.innerHTML = "<h2>Saadaval olevad raamatud:</h2>";
+        this.raamatud.forEach(function (raamat) {
+            var raamatDiv = document.createElement("div");
+            raamatDiv.textContent = "".concat(raamat.pealkiri, " - ").concat(raamat.autor, " (").concat(raamat.saadavus ? "Saadaval" : "Laenutatud", ")");
+            if (raamat.saadavus) {
+                var laenutaButton = document.createElement("button");
+                laenutaButton.textContent = "Laenuta";
+                laenutaButton.onclick = function () {
+                    kasutaja1.laenutaRaamat(raamat);
+                    _this.renderRaamatud();
+                };
+                raamatDiv.appendChild(laenutaButton);
+            }
+            else {
+                var tagastaButton = document.createElement("button");
+                tagastaButton.textContent = "Tagasta";
+                tagastaButton.onclick = function () {
+                    kasutaja1.tagastaRaamat(raamat);
+                    _this.renderRaamatud();
+                };
+                raamatDiv.appendChild(tagastaButton);
+            }
+            output.appendChild(raamatDiv);
         });
-        // Raamatute otsing
-        var searchButton = document.getElementById('searchButton');
-        var searchInput = document.getElementById('searchInput');
-        var bookResults = document.getElementById('bookResults');
-        if (searchButton && searchInput && bookResults) {
-            searchButton.addEventListener('click', function () {
-                var query = searchInput.value;
-                var results = _this.library.searchBooks(query);
-                bookResults.innerHTML = '';
-                results.forEach(function (book) {
-                    var bookElement = document.createElement('div');
-                    bookElement.className = 'book-item';
-                    bookElement.innerHTML = "\n                        <h3>".concat(book.title, "</h3>\n                        <p>Autor: ").concat(book.author, "</p>\n                        <p>Aasta: ").concat(book.publicationYear, "</p>\n                        <p>Saadaval: ").concat(book.availableCopies, "/").concat(book.totalCopies, "</p>\n                        <button class=\"borrow-btn\" data-isbn=\"").concat(book.isbn, "\">Laenuta</button>\n                    ");
-                    bookResults.appendChild(bookElement);
+    };
+    Raamatukogu.prototype.renderLaenutatudRaamatud = function () {
+        var output = document.getElementById("output");
+        if (!output)
+            return;
+        output.innerHTML = "<h2>Laenutatud raamatud:</h2>";
+        this.kasutajad.forEach(function (kasutaja) {
+            var userDiv = document.createElement("div");
+            userDiv.innerHTML = "<strong>".concat(kasutaja.nimi, ":</strong>");
+            var borrowedBooks = kasutaja.laenutatudRaamatud;
+            if (borrowedBooks.length > 0) {
+                borrowedBooks.forEach(function (raamat) {
+                    var bookDiv = document.createElement("div");
+                    bookDiv.textContent = "".concat(raamat.pealkiri, " - ").concat(raamat.autor);
+                    userDiv.appendChild(bookDiv);
                 });
-                // Laenutamisnuppude seadistamine
-                document.querySelectorAll('.borrow-btn').forEach(function (btn) {
-                    btn.addEventListener('click', function (e) {
-                        var target = e.target;
-                        var isbn = target.getAttribute('data-isbn');
-                        if (isbn) {
-                            _this.borrowBookPrompt(isbn);
-                        }
-                    });
-                });
-            });
-        }
-        // Laenutajate kuvamine
-        this.displayMembers();
-        // Tehingute kuvamine
-        this.displayTransactions();
-    };
-    LibraryApp.prototype.displayMembers = function () {
-        var memberList = document.getElementById('memberList');
-        if (memberList) {
-            memberList.innerHTML = '';
-            this.library.getMembers().forEach(function (member) {
-                var memberElement = document.createElement('div');
-                memberElement.className = 'member-item';
-                memberElement.innerHTML = "\n                    <h3>".concat(member.name, "</h3>\n                    <p>ID: ").concat(member.memberId, "</p>\n                    <p>Email: ").concat(member.email, "</p>\n                    <p>Liitunud: ").concat(member.joinDate.toLocaleDateString(), "</p>\n                    <p>Laenutatud raamatuid: ").concat(member.borrowedBooks.length, "</p>\n                ");
-                memberList.appendChild(memberElement);
-            });
-        }
-    };
-    LibraryApp.prototype.displayTransactions = function () {
-        var transactionList = document.getElementById('transactionList');
-        if (transactionList) {
-            transactionList.innerHTML = '';
-            this.library.getTransactionHistory().forEach(function (transaction) {
-                var transactionElement = document.createElement('div');
-                transactionElement.className = 'transaction-item';
-                transactionElement.innerHTML = "\n                    <p><strong>".concat(transaction.transactionType, "</strong></p>\n                    <p>Raamat: ").concat(transaction.book.title, "</p>\n                    <p>Laenutaja: ").concat(transaction.member.name, "</p>\n                    <p>Kuup\u00E4ev: ").concat(transaction.transactionDate.toLocaleString(), "</p>\n                ");
-                transactionList.appendChild(transactionElement);
-            });
-        }
-    };
-    LibraryApp.prototype.borrowBookPrompt = function (isbn) {
-        var memberId = prompt("Sisesta oma laenutaja ID (M001 või M002):");
-        if (memberId) {
-            try {
-                this.library.borrowBook(memberId, isbn);
-                alert("Raamat laenutatud edukalt!");
-                this.displayTransactions();
-                var searchButton = document.getElementById('searchButton');
-                if (searchButton) {
-                    searchButton.click();
-                }
             }
-            catch (error) {
-                alert("Viga: ".concat(error.message));
+            else {
+                userDiv.innerHTML += " Ei ole laenutatud raamatuid.";
             }
-        }
+            output.appendChild(userDiv);
+        });
     };
-    return LibraryApp;
+    Raamatukogu.prototype.setupUI = function () {
+        var _this = this;
+        var addBookButton = document.getElementById("addBook");
+        var registerUserButton = document.getElementById("registerUser");
+        addBookButton === null || addBookButton === void 0 ? void 0 : addBookButton.addEventListener("click", function () {
+            var title = prompt("Sisesta raamatu pealkiri:");
+            var author = prompt("Sisesta raamatu autor:");
+            if (title && author) {
+                var newBook = new Raamat(title, author);
+                _this.lisaRaamat(newBook);
+                alert("Raamat \"".concat(title, "\" lisatud."));
+            }
+        });
+        registerUserButton === null || registerUserButton === void 0 ? void 0 : registerUserButton.addEventListener("click", function () {
+            var name = prompt("Sisesta kasutaja nimi:");
+            if (name) {
+                var newUser = new Kasutaja(name);
+                _this.registreeriKasutaja(newUser);
+                alert("Kasutaja \"".concat(name, "\" registreeritud."));
+            }
+        });
+        var showBorrowedBooksButton = document.getElementById("showBorrowedBooks");
+        showBorrowedBooksButton === null || showBorrowedBooksButton === void 0 ? void 0 : showBorrowedBooksButton.addEventListener("click", function () {
+            _this.renderLaenutatudRaamatud();
+        });
+    };
+    return Raamatukogu;
 }());
-// Rakenduse käivitamine lehe laadimisel
-document.addEventListener('DOMContentLoaded', function () {
-    new LibraryApp();
+// Näide kasutusest
+var library = new Raamatukogu();
+var book1 = new Raamat("The Hunger Games", "Suzanne Collins");
+var book2 = new Raamat("Dune", "Frank Herbert");
+var book3 = new Raamat("The Lord of the Rings", "J.R.R. Tolkien");
+library.lisaRaamat(book1);
+library.lisaRaamat(book2);
+library.lisaRaamat(book3);
+var kasutaja1 = new Kasutaja("Mari");
+var kasutaja2 = new Kasutaja("Jaan");
+library.registreeriKasutaja(kasutaja1);
+library.registreeriKasutaja(kasutaja2);
+(_a = document.getElementById("showBooks")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", function () {
+    library.renderRaamatud();
 });
+library.setupUI();

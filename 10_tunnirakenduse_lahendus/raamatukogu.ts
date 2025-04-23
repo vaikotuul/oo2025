@@ -1,303 +1,170 @@
-// 1. Põhiklassid
-abstract class LibraryEntity {
-    abstract getInfo(): string;
+abstract class Isik {
+    constructor(public nimi: string) {}
+    abstract tegevus(): void;
 }
 
-class Book extends LibraryEntity {
-    constructor(
-        public readonly isbn: string,
-        public title: string,
-        public author: string,
-        public publicationYear: number,
-        public availableCopies: number,
-        public totalCopies: number
-    ) {
-        super();
+class Kasutaja extends Isik {
+    private laenutatudRaamatud: Raamat[] = [];
+
+    tegevus(): void {
+        console.log(`${this.nimi} saab raamatuid laenutada ja tagastada.`);
     }
 
-    getInfo(): string {
-        return `${this.title} by ${this.author} (${this.publicationYear}) - ${this.availableCopies}/${this.totalCopies} available`;
-    }
-}
-
-class LibraryMember extends LibraryEntity {
-    constructor(
-        public readonly memberId: string,
-        public name: string,
-        public email: string,
-        public joinDate: Date,
-        public borrowedBooks: BorrowedBook[] = []
-    ) {
-        super();
-    }
-
-    getInfo(): string {
-        return `${this.name} (ID: ${this.memberId}) - ${this.borrowedBooks.length} books borrowed`;
-    }
-}
-
-// 2. Laenutamise süsteem
-class BorrowedBook {
-    constructor(
-        public book: Book,
-        public borrowDate: Date,
-        public dueDate: Date,
-        public returned: boolean = false
-    ) {}
-
-    getInfo(): string {
-        return `${this.book.title} - Due: ${this.dueDate.toDateString()} ${this.returned ? '(Returned)' : ''}`;
-    }
-}
-
-class LibraryTransaction extends LibraryEntity {
-    constructor(
-        public transactionId: string,
-        public member: LibraryMember,
-        public book: Book,
-        public transactionDate: Date,
-        public transactionType: 'BORROW' | 'RETURN' | 'RENEW'
-    ) {
-        super();
-    }
-
-    getInfo(): string {
-        return `[${this.transactionId}] ${this.transactionType} - ${this.book.title} by ${this.member.name}`;
-    }
-}
-
-// 3. Raamatukogu klass
-class Library {
-    private books: Book[] = [];
-    private members: LibraryMember[] = [];
-    private transactions: LibraryTransaction[] = [];
-
-    addBook(book: Book): void {
-        this.books.push(book);
-    }
-
-    registerMember(member: LibraryMember): void {
-        this.members.push(member);
-    }
-
-    borrowBook(memberId: string, isbn: string): void {
-        const member = this.members.find(m => m.memberId === memberId);
-        const book = this.books.find(b => b.isbn === isbn);
-
-        if (!member || !book) {
-            throw new Error("Member or book not found");
+    laenutaRaamat(raamat: Raamat): void {
+        if (raamat.saadavus) {
+            raamat.laenuta();
+            this.laenutatudRaamatud.push(raamat);
+            console.log(`${this.nimi} laenutas raamatu: ${raamat.pealkiri}`);
+        } else {
+            console.log(`${raamat.pealkiri} ei ole saadaval.`);
         }
+    }
 
-        if (book.availableCopies <= 0) {
-            throw new Error("No available copies of this book");
+    tagastaRaamat(raamat: Raamat): void {
+        const index = this.laenutatudRaamatud.indexOf(raamat);
+        if (index > -1) {
+            raamat.tagasta();
+            this.laenutatudRaamatud.splice(index, 1);
+            console.log(`${this.nimi} tagastas raamatu: ${raamat.pealkiri}`);
+        } else {
+            console.log(`${this.nimi} ei ole seda raamatut laenutanud.`);
         }
-
-        const borrowDate = new Date();
-        const dueDate = new Date();
-        dueDate.setDate(borrowDate.getDate() + 30);
-
-        member.borrowedBooks.push(new BorrowedBook(book, borrowDate, dueDate));
-        book.availableCopies--;
-
-        this.transactions.push(new LibraryTransaction(
-            `TXN-${Date.now()}`,
-            member,
-            book,
-            borrowDate,
-            'BORROW'
-        ));
-    }
-
-    returnBook(memberId: string, isbn: string): void {
-        const member = this.members.find(m => m.memberId === memberId);
-        const book = this.books.find(b => b.isbn === isbn);
-
-        if (!member || !book) {
-            throw new Error("Member or book not found");
-        }
-
-        const borrowedBook = member.borrowedBooks.find(bb => 
-            bb.book.isbn === isbn && !bb.returned
-        );
-
-        if (!borrowedBook) {
-            throw new Error("Book not borrowed by this member");
-        }
-
-        borrowedBook.returned = true;
-        book.availableCopies++;
-
-        this.transactions.push(new LibraryTransaction(
-            `TXN-${Date.now()}`,
-            member,
-            book,
-            new Date(),
-            'RETURN'
-        ));
-    }
-
-    searchBooks(query: string): Book[] {
-        const lowerQuery = query.toLowerCase();
-        return this.books.filter(book => 
-            book.title.toLowerCase().includes(lowerQuery) || 
-            book.author.toLowerCase().includes(lowerQuery) ||
-            book.isbn.includes(query)
-        );
-    }
-
-    getMemberInfo(memberId: string): LibraryMember | undefined {
-        return this.members.find(m => m.memberId === memberId);
-    }
-
-    getTransactionHistory(): LibraryTransaction[] {
-        return [...this.transactions].reverse();
-    }
-
-    getMembers(): LibraryMember[] {
-        return this.members;
     }
 }
 
-// 4. UI ja rakenduse käivitamine
-class LibraryApp {
-    private library: Library;
+abstract class Teos {
+    constructor(public pealkiri: string, public autor: string) {}
+}
 
-    constructor() {
-        this.library = new Library();
-        this.initializeSampleData();
-        this.setupEventListeners();
+class Raamat extends Teos {
+    constructor(pealkiri: string, autor: string, public saadavus: boolean = true) {
+        super(pealkiri, autor);
     }
 
-    private initializeSampleData(): void {
-        // Lisame mõned näidandraamatud
-        this.library.addBook(new Book("978-3-16-148410-0", "Clean Code", "Robert C. Martin", 2008, 3, 5));
-        this.library.addBook(new Book("978-0-13-235088-4", "Design Patterns", "Erich Gamma", 1994, 2, 3));
-        this.library.addBook(new Book("978-0-321-58472-6", "The Pragmatic Programmer", "Andrew Hunt", 1999, 1, 2));
-
-        // Lisame mõned näidiskasutajad
-        this.library.registerMember(new LibraryMember("M001", "Mari Maasikas", "mari@example.com", new Date()));
-        this.library.registerMember(new LibraryMember("M002", "Jaan Jõesaar", "jaan@example.com", new Date()));
+    laenuta(): void {
+        this.saadavus = false;
     }
 
-    private setupEventListeners(): void {
-        // Tabide vahetamine
-        const tabButtons = document.querySelectorAll('.tab-button');
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                
-                button.classList.add('active');
-                const tabId = button.getAttribute('data-tab');
-                if (tabId) {
-                    const tabContent = document.getElementById(tabId);
-                    if (tabContent) {
-                        tabContent.classList.add('active');
-                    }
-                }
-            });
+    tagasta(): void {
+        this.saadavus = true;
+    }
+}
+
+class Raamatukogu {
+    private raamatud: Raamat[] = [];
+    private kasutajad: Kasutaja[] = [];
+
+    lisaRaamat(raamat: Raamat): void {
+        this.raamatud.push(raamat);
+    }
+
+    registreeriKasutaja(kasutaja: Kasutaja): void {
+        this.kasutajad.push(kasutaja);
+    }
+
+    saadavalRaamatud(): Raamat[] {
+        return this.raamatud.filter(raamat => raamat.saadavus);
+    }
+
+    renderRaamatud(): void {
+        const output = document.getElementById("output");
+        if (!output) return;
+
+        output.innerHTML = "<h2>Saadaval olevad raamatud:</h2>";
+        this.raamatud.forEach(raamat => {
+            const raamatDiv = document.createElement("div");
+            raamatDiv.textContent = `${raamat.pealkiri} - ${raamat.autor} (${raamat.saadavus ? "Saadaval" : "Laenutatud"})`;
+            if (raamat.saadavus) {
+                const laenutaButton = document.createElement("button");
+                laenutaButton.textContent = "Laenuta";
+                laenutaButton.onclick = () => {
+                    kasutaja1.laenutaRaamat(raamat);
+                    this.renderRaamatud();
+                };
+                raamatDiv.appendChild(laenutaButton);
+            } else {
+                const tagastaButton = document.createElement("button");
+                tagastaButton.textContent = "Tagasta";
+                tagastaButton.onclick = () => {
+                    kasutaja1.tagastaRaamat(raamat);
+                    this.renderRaamatud();
+                };
+                raamatDiv.appendChild(tagastaButton);
+            }
+            output.appendChild(raamatDiv);
+        });
+    }
+
+    renderLaenutatudRaamatud(): void {
+        const output = document.getElementById("output");
+        if (!output) return;
+
+        output.innerHTML = "<h2>Laenutatud raamatud:</h2>";
+        this.kasutajad.forEach(kasutaja => {
+            const userDiv = document.createElement("div");
+            userDiv.innerHTML = `<strong>${kasutaja.nimi}:</strong>`;
+            const borrowedBooks = (kasutaja as any).laenutatudRaamatud as Raamat[];
+            if (borrowedBooks.length > 0) {
+                borrowedBooks.forEach(raamat => {
+                    const bookDiv = document.createElement("div");
+                    bookDiv.textContent = `${raamat.pealkiri} - ${raamat.autor}`;
+                    userDiv.appendChild(bookDiv);
+                });
+            } else {
+                userDiv.innerHTML += " Ei ole laenutatud raamatuid.";
+            }
+            output.appendChild(userDiv);
+        });
+    }
+
+    setupUI(): void {
+        const addBookButton = document.getElementById("addBook");
+        const registerUserButton = document.getElementById("registerUser");
+
+        addBookButton?.addEventListener("click", () => {
+            const title = prompt("Sisesta raamatu pealkiri:");
+            const author = prompt("Sisesta raamatu autor:");
+            if (title && author) {
+                const newBook = new Raamat(title, author);
+                this.lisaRaamat(newBook);
+                alert(`Raamat "${title}" lisatud.`);
+            }
         });
 
-        // Raamatute otsing
-        const searchButton = document.getElementById('searchButton');
-        const searchInput = document.getElementById('searchInput') as HTMLInputElement;
-        const bookResults = document.getElementById('bookResults');
-
-        if (searchButton && searchInput && bookResults) {
-            searchButton.addEventListener('click', () => {
-                const query = searchInput.value;
-                const results = this.library.searchBooks(query);
-                
-                bookResults.innerHTML = '';
-                results.forEach(book => {
-                    const bookElement = document.createElement('div');
-                    bookElement.className = 'book-item';
-                    bookElement.innerHTML = `
-                        <h3>${book.title}</h3>
-                        <p>Autor: ${book.author}</p>
-                        <p>Aasta: ${book.publicationYear}</p>
-                        <p>Saadaval: ${book.availableCopies}/${book.totalCopies}</p>
-                        <button class="borrow-btn" data-isbn="${book.isbn}">Laenuta</button>
-                    `;
-                    bookResults.appendChild(bookElement);
-                });
-
-                // Laenutamisnuppude seadistamine
-                document.querySelectorAll('.borrow-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const target = e.target as HTMLElement;
-                        const isbn = target.getAttribute('data-isbn');
-                        if (isbn) {
-                            this.borrowBookPrompt(isbn);
-                        }
-                    });
-                });
-            });
-        }
-
-        // Laenutajate kuvamine
-        this.displayMembers();
-
-        // Tehingute kuvamine
-        this.displayTransactions();
-    }
-
-    private displayMembers(): void {
-        const memberList = document.getElementById('memberList');
-        if (memberList) {
-            memberList.innerHTML = '';
-            this.library.getMembers().forEach(member => {
-                const memberElement = document.createElement('div');
-                memberElement.className = 'member-item';
-                memberElement.innerHTML = `
-                    <h3>${member.name}</h3>
-                    <p>ID: ${member.memberId}</p>
-                    <p>Email: ${member.email}</p>
-                    <p>Liitunud: ${member.joinDate.toLocaleDateString()}</p>
-                    <p>Laenutatud raamatuid: ${member.borrowedBooks.length}</p>
-                `;
-                memberList.appendChild(memberElement);
-            });
-        }
-    }
-
-    private displayTransactions(): void {
-        const transactionList = document.getElementById('transactionList');
-        if (transactionList) {
-            transactionList.innerHTML = '';
-            this.library.getTransactionHistory().forEach(transaction => {
-                const transactionElement = document.createElement('div');
-                transactionElement.className = 'transaction-item';
-                transactionElement.innerHTML = `
-                    <p><strong>${transaction.transactionType}</strong></p>
-                    <p>Raamat: ${transaction.book.title}</p>
-                    <p>Laenutaja: ${transaction.member.name}</p>
-                    <p>Kuupäev: ${transaction.transactionDate.toLocaleString()}</p>
-                `;
-                transactionList.appendChild(transactionElement);
-            });
-        }
-    }
-
-    private borrowBookPrompt(isbn: string): void {
-        const memberId = prompt("Sisesta oma laenutaja ID (M001 või M002):");
-        if (memberId) {
-            try {
-                this.library.borrowBook(memberId, isbn);
-                alert("Raamat laenutatud edukalt!");
-                this.displayTransactions();
-                const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
-                if (searchButton) {
-                    searchButton.click();
-                }
-            } catch (error) {
-                alert(`Viga: ${(error as Error).message}`);
+        registerUserButton?.addEventListener("click", () => {
+            const name = prompt("Sisesta kasutaja nimi:");
+            if (name) {
+                const newUser = new Kasutaja(name);
+                this.registreeriKasutaja(newUser);
+                alert(`Kasutaja "${name}" registreeritud.`);
             }
-        }
+        });
+
+        const showBorrowedBooksButton = document.getElementById("showBorrowedBooks");
+        showBorrowedBooksButton?.addEventListener("click", () => {
+            this.renderLaenutatudRaamatud();
+        });
     }
 }
 
-// Rakenduse käivitamine lehe laadimisel
-document.addEventListener('DOMContentLoaded', () => {
-    new LibraryApp();
+// Näide kasutusest
+const library = new Raamatukogu();
+const book1 = new Raamat("The Hunger Games", "Suzanne Collins");
+const book2 = new Raamat("Dune", "Frank Herbert");
+const book3 = new Raamat("The Lord of the Rings", "J.R.R. Tolkien");
+
+library.lisaRaamat(book1);
+library.lisaRaamat(book2);
+library.lisaRaamat(book3);
+
+const kasutaja1 = new Kasutaja("Mari");
+const kasutaja2 = new Kasutaja("Jaan");
+
+library.registreeriKasutaja(kasutaja1);
+library.registreeriKasutaja(kasutaja2);
+
+document.getElementById("showBooks")?.addEventListener("click", () => {
+    library.renderRaamatud();
 });
+
+library.setupUI();
