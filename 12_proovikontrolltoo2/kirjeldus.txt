@@ -1,1 +1,7 @@
 Proovikontrolltöö ülesande lahendus kopeerida siia kausta
+
+__Loo liides Taheloendaja, mille ainus meetod saab sisendiks tähe ning väljastab selle tähe esinemise arvu. Loo realiseeriv klass sõna tarbeks. Koosta automaattestid töö kontrolliks näitamaks a, p ja e-tähtede arvu sõnas pere.
+
+__Loo liidest realiseeriv klass Lause. Lause sees on sõna-klassist objektide loetelu, mis algväärtustatakse lause konstruktoris ette antava teksti põhjal. Lauses tähe esinemissageduse loendamisel liidetakse kokku vastava tähe esinemissagedused lause sõnades. Koosta automaattestid.
+
+Loo abstraktne klass Tekst, mis realiseerib klassi Taheloendaja. Tekstil on alamklassid Sona ja Lause. Tekstil on abstraktne käsklus kysiSisu ning olemasolev käsklus etteantud tähe loendamiseks sisust. Kui lauses on mõni sõna korduvalt, siis selle hoidmiseks kasutatakse Sona klassi sama objekti.  
