@@ -147,7 +147,6 @@ class Raamatukogu {
     }
 }
 
-// Näide kasutusest
 const library = new Raamatukogu();
 const book1 = new Raamat("The Hunger Games", "Suzanne Collins");
 const book2 = new Raamat("Dune", "Frank Herbert");
