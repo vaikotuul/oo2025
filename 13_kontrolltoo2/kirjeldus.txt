@@ -5,4 +5,12 @@ Teise kontrolltöö tulemus on eksamihinde aluseks:
 2 punkti - B
 3 punkti - A
 
-Muude kursusel esitavate tööde abil saab hinnet mõlemas suunas mõjutada. 
+Muude kursusel esitavate tööde abil saab hinnet mõlemas suunas mõjutada.
+
+----- Esimene punkt - Loo klassi Auto väljadega pikkus, mass ning mark. Koosta selle klassi objektidest massiiv. 
+
+----- Teine punkt - Loo klassile alamklass LiikuvAuto, mis realiseeriks liidest Liikuja ning millel on x-koordinaat. Liideses on kaks meetodit "edasi" ning "tagasi". Üks neist suurendab välja 
+"asukoht" väärtust, teine vähendab seda. Katseta loodud klassi isendit. Kuva ka joonisena ekraanil.
+
+Kolmas punkt - Loo viimati loodud klassile alamklassid Veoauto ning Soiduauto. Sõiduauto puhul kontrollitakse, et mass ei ületaks kolme ja poolt tonni. Veoauto puhul peetakse logina sõidupäevikut -
+jäetakse meelde ajad, millal ning kui palju on liigutud. Saab küsida sõidud ja teepikkuse etteantud ajavahemiku kohta. Kuva hetkeolukord ka joonisena ekraanil.
